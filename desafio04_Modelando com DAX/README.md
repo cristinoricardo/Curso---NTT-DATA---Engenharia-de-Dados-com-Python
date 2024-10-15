@@ -16,3 +16,51 @@ Criar um modelo de dados baseado em star schema usando a tabela *Financial Sampl
 - `MAX()`
 - `MIN()`
 - `CALENDAR()`
+
+- D_Produtos = 
+SUMMARIZE(
+    'financials',
+    'financials'[Product],
+    "Média de Unidades Vendidas", AVERAGE('financials'[Units Sold]),
+    "Média do Valor de Vendas", AVERAGE('financials'[Sales]),
+    "Mediana do Valor de Vendas", MEDIAN('financials'[Sales]),
+    "Valor Máximo de Venda", MAX('financials'[Sales]),
+    "Valor Mínimo de Venda", MIN('financials'[Sales])
+)
+
+D_Produtos_Detalhes =  
+SUMMARIZE(
+    'financials',
+    'financials'[Product],
+    "Discount Band", MAX('financials'[Discount Band]),
+    "Sale Price", MAX('financials'[Sales Price]),
+    "Units Sold", SUM('financials'[Units Sold]),
+    "Manufacturing Price", MAX('financials'[Manufacturing Price])
+)
+
+D_Descontos = 
+SUMMARIZE(
+    'financials',
+    'financials'[Product],
+    "Discount", MAX('financials'[Discount]),
+    "Discount Band", MAX('financials'[Discount Band])
+)
+
+F_Vendas = 
+SELECTCOLUMNS(
+    'financials',
+    "ID_Produto", 'financials'[Product],
+    "Produto", 'financials'[Product],
+    "Units Sold", 'financials'[Units Sold],
+    "Sales Price", 'financials'[Sales Price],
+    "Discount", 'financials'[Discount],
+    "Band", 'financials'[Discount Band],
+    "Segment", 'financials'[Segment],
+    "Country", 'financials'[Country],
+    "Sales", 'financials'[Sales],
+    "Profit", 'financials'[Profit],
+    "Date", 'financials'[Date]
+)
+
+D_Calendário = CALENDAR(MIN('financials'[Date]), MAX('financials'[Date]))
+
